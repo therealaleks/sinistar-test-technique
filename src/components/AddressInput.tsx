@@ -59,7 +59,6 @@ export default function AddressInput({handleAddressInput}: AddressInputProps) {
 
         fetch({ input: inputValue }, (results?: readonly PlaceType[]) => {
             if (active) {
-                console.log(results);
                 let newOptions: readonly PlaceType[] = [];
 
                 if (value) {
@@ -80,8 +79,8 @@ export default function AddressInput({handleAddressInput}: AddressInputProps) {
     }, [value, inputValue, fetch]);
 
     return (
-        <Box width={"30vh"} m={"15px"}>
-            <Card sx={{p: "5px"}}>
+        <Box m={"15px"}>
+            <Card sx={{p: "10px", borderRadius:"10px",  backdropFilter: "blur(5px)"}}>
                 <Autocomplete
                     id="google-address-field"
                     sx={{ width: "100%"}}

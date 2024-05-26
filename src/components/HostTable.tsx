@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
-import type {Host} from 'components/Dashboard';
+import type { Host } from 'components/Dashboard';
 
 interface HostTableProps {
     hostData: Host[],
@@ -29,26 +29,24 @@ function HostTable({ hostData, handleSelectedHostIds }: HostTableProps) {
     const rows = hostData.map(({ id, name, address, city }) => ({ id, name, address, city }))
 
     return (
-        <Box width={"40vw"} m={"15px"} position={"absolute"} sx={{ bottom:0, left: 0 }}>
-            <Card sx={{ borderRadius: "10px" }}>
+        <Box width={"100%"} m={"15px"}>
+            <Card sx={{ borderRadius: "10px" , boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",  backdropFilter: "blur(5px)"}} >
                 <CardContent>
                     <Box m={"10px"}>
                         <Typography variant="h5" component="div" fontWeight={"bold"}>
                             Hosts
                         </Typography>
                     </Box>
-                    <DataGrid
-                        // dubious casting
-                        onRowSelectionModelChange={(e) => handleSelectedHostIds(e as number[])}
-                        rows={rows}
-                        columns={columns}
-                        initialState={{
-                            pagination: {
-                                paginationModel: { page: 0, pageSize: 5 },
-                            },
-                        }}
-                        checkboxSelection
-                    />
+                    <Box m={"10px"} height={"30vh"}>
+                        <DataGrid
+                            // dubious casting
+                            onRowSelectionModelChange={(e) => handleSelectedHostIds(e as number[])}
+                            rows={rows}
+                            columns={columns}
+                            autoPageSize
+                            checkboxSelection
+                        />
+                    </Box>
                 </CardContent>
             </Card>
         </Box>

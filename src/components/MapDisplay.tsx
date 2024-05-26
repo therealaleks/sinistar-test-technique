@@ -41,6 +41,8 @@ function MapDisplay({ markerData, locationMarkerData }: MapDisplayProps) {
                     lng: center?.lng(),
                 }
 
+                map.panTo({lat: locationMarkerData.latitude, lng: locationMarkerData.longitude });
+
                 const zoomTween = new Tween(cameraZoom) // Create a new tween that modifies 'cameraOptions'.
                     .to({ zoom: 11}, 6000) // Move to destination in 15 second.
                     .easing(Easing.Cubic.Out) // Use an easing function to make the animation smooth.
@@ -74,7 +76,7 @@ function MapDisplay({ markerData, locationMarkerData }: MapDisplayProps) {
                 }
 
                 requestAnimationFrame(animateZoom);
-                requestAnimationFrame(animateCenter);
+                //requestAnimationFrame(animateCenter);
             }
         }
     }

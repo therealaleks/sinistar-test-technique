@@ -6,10 +6,10 @@ import Typography from '@mui/material/Typography';
 function Navbar() {
     return (
         <Box height="65px" sx={{ flexGrow: 1 }}>
-            <AppBar sx={{height:"65px"}} position="fixed">
+            <AppBar sx={{height:"65px", backdropFilter: "blur(10px)"}} position="fixed">
                 <Toolbar>
-                    <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                        News
+                    <Typography variant="h4" color="#ffff" component="div" sx={{ flexGrow: 1, fontWeight: "bold" }}>
+
                     </Typography>
                 </Toolbar>
             </AppBar>

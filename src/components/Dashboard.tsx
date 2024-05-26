@@ -1,6 +1,7 @@
 import Box from '@mui/material/Box';
 import HostTable from 'components/HostTable';
 import MapDisplay from 'components/MapDisplay';
+import HostControl from 'components/HostControl';
 import WeightSelector from 'components/WeightSelector';
 import AddressInput from 'components/AddressInput';
 import { useState, useEffect, useRef } from 'react';
@@ -94,16 +95,14 @@ function Dashboard() {
         setHostData(sortedData);
     },
         [weights]);
-    console.log(geocodingLibrary);
     useEffect(() => {
 
         let active = true;
 
-        console.log(geocodingLibrary);
         if (!geocoder.current && geocodingLibrary) {
             geocoder.current = new geocodingLibrary.Geocoder()
         }
-        console.log(geocoder.current)
+
         return () => {
             active = false;
         };
@@ -130,8 +129,7 @@ function Dashboard() {
         }
         geocoder.current
             .geocode({ placeId: address.place_id })
-            .then(({results}: {results: GeoCodeType[]}) => {
-                console.log(results);
+            .then(({ results }: { results: GeoCodeType[] }) => {
                 const lat = results[0].geometry.location.lat();
                 const lng = results[0].geometry.location.lng();
 
@@ -143,9 +141,12 @@ function Dashboard() {
     return (
         <Box sx={{ zIndex: 1, boxSizing: "border-box" }} position={"fixed"} width={"100%"} height={"95%"}>
             <MapDisplay locationMarkerData={userAddressData} markerData={markerData()} />
-            <HostTable hostData={hostData} handleSelectedHostIds={handleSelectedHostIds} />
-            <AddressInput handleAddressInput={handleUserAddressInput} />
-            <WeightSelector handleWeightsSelect={handleWeightsSelect} />
+            <HostControl
+                hostData={hostData}
+                handleSelectedHostIds={handleSelectedHostIds}
+                handleWeightsSelect={handleWeightsSelect}
+                handleAddressInput={handleUserAddressInput}
+            />
         </Box>
     );
 }
