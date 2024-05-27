@@ -28,10 +28,12 @@ function App() {
 
   return (
     <ThemeProvider theme={mainTheme}>
-      <Navbar />
+      <Navbar height={"65px"}/>
+      <Box sx={{ zIndex: 1, boxSizing: "border-box" }} position={"fixed"} width={"100%"} height={'calc(100% - 65px)'}>
       <APIProvider apiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string} onLoad={() => console.log('Maps API has loaded.')}>
         <Dashboard />
       </APIProvider>
+      </Box>
     </ThemeProvider>
   );
 }

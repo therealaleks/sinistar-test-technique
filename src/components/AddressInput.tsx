@@ -9,10 +9,13 @@ import { useMapsLibrary } from '@vis.gl/react-google-maps';
 import Card from '@mui/material/Card';
 import Box from '@mui/material/Box';
 import type { PlaceType } from 'components/Dashboard';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+
 
 interface AddressInputProps {
     handleAddressInput?: (address: PlaceType | null) => void,
 }
+
 
 
 export default function AddressInput({handleAddressInput}: AddressInputProps) {
@@ -39,6 +42,14 @@ export default function AddressInput({handleAddressInput}: AddressInputProps) {
             ),
         [],
     );
+
+    const theme = createTheme({
+        palette: {
+          background: {
+            paper: '#ffff',
+          },
+        },
+      });
 
 
     //active?
@@ -76,11 +87,13 @@ export default function AddressInput({handleAddressInput}: AddressInputProps) {
         return () => {
             active = false;
         };
-    }, [value, inputValue, fetch]);
+    }, [value, inputValue, fetch, placesLib]);
 
     return (
         <Box m={"15px"}>
+            
             <Card sx={{p: "10px", borderRadius:"10px",  backdropFilter: "blur(5px)"}}>
+            <ThemeProvider theme={theme}>
                 <Autocomplete
                     id="google-address-field"
                     sx={{ width: "100%"}}
@@ -110,8 +123,9 @@ export default function AddressInput({handleAddressInput}: AddressInputProps) {
                         //   option.structured_formatting.main_text_matched_substrings || [];
 
                         return (
+                            
                             <li {...props}>
-                                <Grid container alignItems="center">
+                                <Grid container alignItems="center">  
                                     <Grid item sx={{ display: 'flex', width: 44 }}>
                                         <LocationOnIcon sx={{ color: 'text.secondary' }} />
                                     </Grid>
@@ -123,10 +137,13 @@ export default function AddressInput({handleAddressInput}: AddressInputProps) {
                                     </Grid>
                                 </Grid>
                             </li>
+                            
                         );
                     }}
                 />
+                            </ThemeProvider>
             </Card>
+
         </Box>
     );
 }

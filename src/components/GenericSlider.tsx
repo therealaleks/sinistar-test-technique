@@ -12,9 +12,10 @@ interface GenericSliderProps {
     handleInputValue: (value: number) => void,
     value: number,
     children?: ReactNode,
+    color?: string, 
 }
 
-export default function GenericSlider({ value, handleInputValue, children }: GenericSliderProps) {
+export default function GenericSlider({ value, handleInputValue, children, color }: GenericSliderProps) {
 
     const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
         handleInputValue(event.target.value === '' ? 0 : Number(event.target.value));
@@ -32,7 +33,7 @@ export default function GenericSlider({ value, handleInputValue, children }: Gen
             {children}
             <Grid container spacing={2} alignItems="center">
                 <Grid item xs>
-                    <Slider value={value} onChange={(e, newVal) => handleInputValue(newVal as number)} aria-label="Host response rate weight" />
+                    <Slider sx={{color: color}} valueLabelDisplay="auto" value={value} onChange={(e, newVal) => handleInputValue(newVal as number)} aria-label="Host response rate weight"  />
                 </Grid>
                 <Grid item>
                     <Typography component="div" fontWeight={"bold"}>
