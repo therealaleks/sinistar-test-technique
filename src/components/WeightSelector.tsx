@@ -7,16 +7,17 @@ import {
     Button,
     CardContent,
     Typography,
-    Card,
 } from '@mui/material'
 import ChatIcon from '@mui/icons-material/Chat';
 import MoreTimeIcon from '@mui/icons-material/MoreTime';
 import ThumbsUpDownRoundedIcon from '@mui/icons-material/ThumbsUpDownRounded';
 import PlaceIcon from '@mui/icons-material/Place';
+import type { PieValueType } from '@mui/x-charts/models/seriesType/pie';
 
 import type { Weights } from 'shared/shared.types';
 import GenericSlider from 'components/GenericSlider';
-import type { PieValueType } from '@mui/x-charts/models/seriesType/pie';
+import DashboardCard from 'components/DashboardCard';
+
 
 interface WeightSelectorProps {
     handleWeightsSelect: (weights: Weights) => void,
@@ -90,9 +91,9 @@ function WeightSelector({ handleWeightsSelect, loading, distanceEnabled }: Weigh
 
     const pieChartData = (): PieValueType[] => {
         const data: PieValueType[] = [
-            { id: 0, value: factors.HRW.value, label: factors.HRW.title, color: factors.HRW.color },
-            { id: 1, value: factors.RSW.value, label: factors.RSW.title, color: factors.RSW.color },
-            { id: 2, value: factors.EFW.value, label: factors.EFW.title, color: factors.EFW.color },
+            { id: 0, value: factors.HRW.value + 1, label: factors.HRW.title, color: factors.HRW.color },
+            { id: 1, value: factors.RSW.value + 1, label: factors.RSW.title, color: factors.RSW.color },
+            { id: 2, value: factors.EFW.value + 1, label: factors.EFW.title, color: factors.EFW.color },
         ];
 
         if (distanceEnabled) {
@@ -103,15 +104,15 @@ function WeightSelector({ handleWeightsSelect, loading, distanceEnabled }: Weigh
     };
 
     return (
-        <Card sx={{ borderRadius: "10px", height: "100%", pl: "13px", boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)", backdropFilter: "blur(5px)" }}>
+        <DashboardCard sx={{ height: "100%", pl: "13px" }}>
             <CardContent>
-                <Box mt={"10px"} mb={"10px"}>
-                    <Typography variant="h5" component="div" fontWeight={"bold"} >
+                <Box mt="10px" mb="10px">
+                    <Typography variant="h5" component="div" fontWeight="bold" >
                         Tell us what matters
                     </Typography>
                 </Box>
-                <Stack spacing={0} direction="row" alignItems="center" justifyContent={"center"}>
-                    <Box sx={{ width: { xs: "100%", md: "50%" } }} >
+                <Stack spacing={0} direction="row" alignItems="center" justifyContent="center">
+                    <Box sx={{ width: { xs: "100%", sm: "50%" } }} >
                         <Stack spacing={0} direction="column" alignItems="center">
                             {
                                 Object.keys(factors).map((factor: string) => {
@@ -133,7 +134,7 @@ function WeightSelector({ handleWeightsSelect, loading, distanceEnabled }: Weigh
                             }
                         </Stack>
                     </Box>
-                    <Box width="50%" height="200px" display={{ xs: "none", md: "inline" }} >
+                    <Box width="50%" height="200px" display={{ xs: "none", sm: "inline" }} >
                         <PieChart
                             sx={{ ml: "25%" }}
                             slotProps={{
@@ -150,7 +151,7 @@ function WeightSelector({ handleWeightsSelect, loading, distanceEnabled }: Weigh
                                     cornerRadius: 5,
                                     data: pieChartData(),
                                     valueFormatter: (v) => {
-                                        return `${(v.value)}`;
+                                        return `${(v.value-1)}`;
                                     },
                                 },
                             ]}
@@ -158,7 +159,7 @@ function WeightSelector({ handleWeightsSelect, loading, distanceEnabled }: Weigh
                     </Box>
                 </Stack>
                 <Box my="10px">
-                    <Stack spacing={0} direction="row" alignItems="center" justifyContent={"center"}>
+                    <Stack spacing={0} direction="row" alignItems="center" justifyContent="center">
                         <Button
                             sx={{ color: "white" }}
                             variant="contained"
@@ -170,7 +171,7 @@ function WeightSelector({ handleWeightsSelect, loading, distanceEnabled }: Weigh
                     </Stack>
                 </Box>
             </CardContent>
-        </Card>
+        </DashboardCard>
     );
 }
 

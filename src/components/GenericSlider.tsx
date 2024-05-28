@@ -37,14 +37,18 @@ export default function GenericSlider({ value, handleInputValue, children, color
         }
     };
     return (
-        <Box width="100%">
+        <Box width="100%" height="55px">
             {children}
             <Grid container spacing={2} alignItems="center">
                 <Grid item xs>
-                    <Slider sx={{color: color}} valueLabelDisplay="auto" value={value} onChange={(e, newVal) => handleInputValue(newVal as number)} aria-label="Host response rate weight"  />
+                    <Slider
+                        sx={{color: color}}
+                        valueLabelDisplay="auto"
+                        value={value} onChange={(e, newVal) => handleInputValue(newVal as number)}
+                    />
                 </Grid>
                 <Grid item>
-                    <Typography component="div" fontWeight={"bold"}>
+                    <Typography component="div" fontWeight="bold">
                         <Input
                             value={value}
                             size="small"
@@ -55,7 +59,6 @@ export default function GenericSlider({ value, handleInputValue, children, color
                                 min: 0,
                                 max: 100,
                                 type: 'number',
-                                'aria-labelledby': 'input-slider',
                             }}
                         />
                     </Typography>

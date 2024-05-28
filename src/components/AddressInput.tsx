@@ -6,21 +6,19 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { debounce } from '@mui/material/utils';
 import { useMapsLibrary } from '@vis.gl/react-google-maps';
-import Card from '@mui/material/Card';
+import DashboardCard from 'components/DashboardCard';
+import DashboardAlert from 'components/DashboardAlert';
 import type { PlaceType } from 'shared/shared.types';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-
 
 interface AddressInputProps {
     handleAddressInput?: (address: PlaceType | null) => void,
 }
 
-
-
 export default function AddressInput({ handleAddressInput }: AddressInputProps) {
-    // any?
     const autocompleteService = useRef(null as any);
     const [value, setValue] = useState<PlaceType | null>(null);
+    const [apiFailToastOpen, setApiFailToastOpen] = useState<boolean>(false);
     const [inputValue, setInputValue] = useState<string>('');
     const [options, setOptions] = useState<readonly PlaceType[]>([]);
     const placesLib = useMapsLibrary('places');
@@ -35,7 +33,10 @@ export default function AddressInput({ handleAddressInput }: AddressInputProps) 
                     (autocompleteService.current as any).getPlacePredictions(
                         request,
                         callback,
-                    );
+                    ).catch((e: any) => {
+                        console.log("failed to fetch address suggestions due to: " + e);
+                        setApiFailToastOpen(true);
+                    });
                 },
                 400,
             ),
@@ -44,14 +45,19 @@ export default function AddressInput({ handleAddressInput }: AddressInputProps) 
 
     const theme = createTheme({
         palette: {
+            primary: {
+                main: '#ff9800',
+                light: '#12819c',
+            },
+            secondary: {
+                main: '#f50057',
+            },
             background: {
                 paper: '#ffff',
             },
         },
     });
 
-
-    //active?
     useEffect(() => {
         let active = true;
 
@@ -89,15 +95,15 @@ export default function AddressInput({ handleAddressInput }: AddressInputProps) 
     }, [value, inputValue, fetch, placesLib]);
 
     return (
-            <Card sx={{ p: "10px", borderRadius: "10px", boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)", backdropFilter: "blur(5px)" }}>
+        <>
+            <DashboardCard sx={{ p: "10px" }}>
                 <ThemeProvider theme={theme}>
                     <Autocomplete
                         id="google-address-field"
                         sx={{ width: "100%" }}
                         getOptionLabel={(option) =>
-                            typeof option === 'string' ? option : option.description
+                            option.description
                         }
-                        filterOptions={(x) => x}
                         options={options}
                         autoComplete
                         filterSelectedOptions
@@ -108,16 +114,13 @@ export default function AddressInput({ handleAddressInput }: AddressInputProps) 
                             setValue(newValue);
                             if (handleAddressInput) handleAddressInput(newValue);
                         }}
-                        onInputChange={(event, newInputValue) => {
+                        onInputChange={(event: any, newInputValue: string) => {
                             setInputValue(newInputValue);
                         }}
                         renderInput={(params) => (
                             <TextField {...params} label="Enter your address" fullWidth />
                         )}
                         renderOption={(props, option) => {
-                            // const matches =
-                            //   option.structured_formatting.main_text_matched_substrings || [];
-
                             return (
 
                                 <li {...props}>
@@ -138,6 +141,13 @@ export default function AddressInput({ handleAddressInput }: AddressInputProps) 
                         }}
                     />
                 </ThemeProvider>
-            </Card>
+            </DashboardCard>
+            <DashboardAlert
+                open={apiFailToastOpen}
+                severity="error"
+                message="Failed to load addresses"
+                handleClose={() => setApiFailToastOpen(false)}
+            />
+        </>
     );
 }

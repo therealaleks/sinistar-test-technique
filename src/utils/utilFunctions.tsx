@@ -85,19 +85,64 @@ export const getOffsetCenter = (offsetX: number, offsetY: number, zoom: number, 
 
 }
 
-export const hostWeightedScore = (host: Host, weights: Weights, hostDistances: HostDistances | null): number => {
-    // define max scores in constant
+export const distanceScores = (hostDistances: HostDistances | null): {[hostId: string]: number} | null => {
+
+    if(!hostDistances) return null;
+
+    let maxDistance: number = Math.max(...Object.values(hostDistances));
+
+    const distanceScores: {[hostId: string]: number}  = {};
+
+    Object.keys(hostDistances).forEach((id: string): void => {
+        distanceScores[id] = 1.0 - (hostDistances[id] / maxDistance);
+    });
+
+    return distanceScores;
+
+}
+
+const defaultHostScore = (host: Host, hostDistanceScores: {[hostId: string]: number} | null): number => {
+    const normHRW = host.host_response_rate / 1.0
+    const normRSW = host.review_score / 5.0
+    const normEFW = host.extension_flexibility / 1.0
+
+    let score = (normHRW) + (normRSW) + (normEFW);
+
+    let norm = 3.0;
+
+    if (hostDistanceScores) {
+        score += hostDistanceScores[host.id];
+        norm += 1.0;
+    }
+
+    // normalize score out of 100
+    return score/norm * 100;
+}
+
+export const hostWeightedScore = (host: Host, weights: Weights, hostDistanceScores: {[hostId: string]: number} | null): number => {
+    // assuming no negative weights
+    if (weights.HRW + weights.RSW + weights.EFW === 0) {
+        if (hostDistanceScores) {
+            if (weights.UDW === 0) return defaultHostScore(host, hostDistanceScores);
+        }else{
+            return defaultHostScore(host, hostDistanceScores)
+        }
+    }
+
+    // todo: define max scores in constant
     const normHRW = host.host_response_rate / 1.0
     const normRSW = host.review_score / 5.0
     const normEFW = host.extension_flexibility / 1.0
 
     let score = (normHRW * weights.HRW) + (normRSW * weights.RSW) + (normEFW * weights.EFW);
 
-    if (hostDistances) {
-        score += (1.0 - hostDistances[host.id]) * weights.UDW;
+    let norm = weights.HRW + weights.RSW + weights.EFW;
+
+    if (hostDistanceScores) {
+        score += hostDistanceScores[host.id] * weights.UDW;
+        norm += weights.UDW
     }
 
-    // normalize score out of 100?
-
-    return score;
+    // normalize score out of 100
+    return score/norm * 100;
 }
