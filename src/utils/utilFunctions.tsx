@@ -1,4 +1,9 @@
-import type { Coordinates, Host, Weights, HostDistances } from 'shared/shared.types';
+import type {
+    Coordinates,
+    Host,
+    Weights,
+    HostDistances,
+} from 'shared/shared.types';
 
 export function distance(p1: Coordinates, p2: Coordinates): number {
     let earthRadiusKm = 6378;
@@ -9,16 +14,18 @@ export function distance(p1: Coordinates, p2: Coordinates): number {
     let latDelta = latRad2 - latRad1;
     let lngDelta = (p2.lng - p1.lng) * (Math.PI / 180);
 
-    let distance = 2 * earthRadiusKm * Math.asin(
-        Math.sqrt(
-            Math.sin(latDelta / 2)
-            * Math.sin(latDelta / 2)
-            + Math.cos(latRad1)
-            * Math.cos(latRad2)
-            * Math.sin(lngDelta / 2)
-            * Math.sin(lngDelta / 2)
-        )
-    );
+    let distance =
+        2 *
+        earthRadiusKm *
+        Math.asin(
+            Math.sqrt(
+                Math.sin(latDelta / 2) * Math.sin(latDelta / 2) +
+                    Math.cos(latRad1) *
+                        Math.cos(latRad2) *
+                        Math.sin(lngDelta / 2) *
+                        Math.sin(lngDelta / 2),
+            ),
+        );
 
     return distance;
 }
@@ -32,7 +39,12 @@ function arraySwap(array: any[], i: number, j: number): void {
     array[i] = temp;
 }
 
-function lomutoPartition(array: any[], start: number, end: number, compare: (e1: any, e2: any) => number): number {
+function lomutoPartition(
+    array: any[],
+    start: number,
+    end: number,
+    compare: (e1: any, e2: any) => number,
+): number {
     const pivot = start;
     let partition = start;
 
@@ -48,7 +60,12 @@ function lomutoPartition(array: any[], start: number, end: number, compare: (e1:
     return partition;
 }
 
-function quickSortRecursive(array: any[], start: number, end: number, compare: (e1: any, e2: any) => number): void {
+function quickSortRecursive(
+    array: any[],
+    start: number,
+    end: number,
+    compare: (e1: any, e2: any) => number,
+): void {
     if (end < start) return;
 
     const partition = lomutoPartition(array, start, end, compare);
@@ -57,24 +74,38 @@ function quickSortRecursive(array: any[], start: number, end: number, compare: (
     quickSortRecursive(array, start, partition - 1, compare);
 }
 
-export function quickSort<T>(array: T[], compare: (e1: T, e2: T) => number): T[] {
+export function quickSort<T>(
+    array: T[],
+    compare: (e1: T, e2: T) => number,
+): T[] {
     quickSortRecursive(array, 0, array.length - 1, compare);
     return array;
 }
 
-export const getOffsetCenter = (offsetX: number, offsetY: number, zoom: number, map: google.maps.Map, latlng: Coordinates): Coordinates => {
+export const getOffsetCenter = (
+    offsetX: number,
+    offsetY: number,
+    zoom: number,
+    map: google.maps.Map,
+    latlng: Coordinates,
+): Coordinates => {
     var scale = Math.pow(2, zoom);
 
     var worldCoordinateCenter = map.getProjection()?.fromLatLngToPoint(latlng);
-    var pixelOffset = new google.maps.Point((offsetX / scale) || 0, (offsetY / scale) || 0);
+    var pixelOffset = new google.maps.Point(
+        offsetX / scale || 0,
+        offsetY / scale || 0,
+    );
 
     if (worldCoordinateCenter) {
         var worldCoordinateNewCenter = new google.maps.Point(
             worldCoordinateCenter.x - pixelOffset.x,
-            worldCoordinateCenter.y + pixelOffset.y
+            worldCoordinateCenter.y + pixelOffset.y,
         );
 
-        var newCenter = map.getProjection()?.fromPointToLatLng(worldCoordinateNewCenter);
+        var newCenter = map
+            .getProjection()
+            ?.fromPointToLatLng(worldCoordinateNewCenter);
 
         if (newCenter) {
             return { lat: newCenter.lat(), lng: newCenter.lng() };
@@ -82,31 +113,33 @@ export const getOffsetCenter = (offsetX: number, offsetY: number, zoom: number, 
     }
 
     return latlng;
+};
 
-}
-
-export const distanceScores = (hostDistances: HostDistances | null): {[hostId: string]: number} | null => {
-
-    if(!hostDistances) return null;
+export const distanceScores = (
+    hostDistances: HostDistances | null,
+): { [hostId: string]: number } | null => {
+    if (!hostDistances) return null;
 
     let maxDistance: number = Math.max(...Object.values(hostDistances));
 
-    const distanceScores: {[hostId: string]: number}  = {};
+    const distanceScores: { [hostId: string]: number } = {};
 
     Object.keys(hostDistances).forEach((id: string): void => {
-        distanceScores[id] = 1.0 - (hostDistances[id] / maxDistance);
+        distanceScores[id] = 1.0 - hostDistances[id] / maxDistance;
     });
 
     return distanceScores;
+};
 
-}
+const defaultHostScore = (
+    host: Host,
+    hostDistanceScores: { [hostId: string]: number } | null,
+): number => {
+    const normHRW = host.host_response_rate / 1.0;
+    const normRSW = host.review_score / 5.0;
+    const normEFW = host.extension_flexibility / 1.0;
 
-const defaultHostScore = (host: Host, hostDistanceScores: {[hostId: string]: number} | null): number => {
-    const normHRW = host.host_response_rate / 1.0
-    const normRSW = host.review_score / 5.0
-    const normEFW = host.extension_flexibility / 1.0
-
-    let score = (normHRW) + (normRSW) + (normEFW);
+    let score = normHRW + normRSW + normEFW;
 
     let norm = 3.0;
 
@@ -116,33 +149,39 @@ const defaultHostScore = (host: Host, hostDistanceScores: {[hostId: string]: num
     }
 
     // normalize score out of 100
-    return score/norm * 100;
-}
+    return (score / norm) * 100;
+};
 
-export const hostWeightedScore = (host: Host, weights: Weights, hostDistanceScores: {[hostId: string]: number} | null): number => {
+export const hostWeightedScore = (
+    host: Host,
+    weights: Weights,
+    hostDistanceScores: { [hostId: string]: number } | null,
+): number => {
     // assuming no negative weights
     if (weights.HRW + weights.RSW + weights.EFW === 0) {
         if (hostDistanceScores) {
-            if (weights.UDW === 0) return defaultHostScore(host, hostDistanceScores);
-        }else{
-            return defaultHostScore(host, hostDistanceScores)
+            if (weights.UDW === 0)
+                return defaultHostScore(host, hostDistanceScores);
+        } else {
+            return defaultHostScore(host, hostDistanceScores);
         }
     }
 
     // todo: define max scores in constant
-    const normHRW = host.host_response_rate / 1.0
-    const normRSW = host.review_score / 5.0
-    const normEFW = host.extension_flexibility / 1.0
+    const normHRW = host.host_response_rate / 1.0;
+    const normRSW = host.review_score / 5.0;
+    const normEFW = host.extension_flexibility / 1.0;
 
-    let score = (normHRW * weights.HRW) + (normRSW * weights.RSW) + (normEFW * weights.EFW);
+    let score =
+        normHRW * weights.HRW + normRSW * weights.RSW + normEFW * weights.EFW;
 
     let norm = weights.HRW + weights.RSW + weights.EFW;
 
     if (hostDistanceScores) {
         score += hostDistanceScores[host.id] * weights.UDW;
-        norm += weights.UDW
+        norm += weights.UDW;
     }
 
     // normalize score out of 100
-    return score/norm * 100;
-}
+    return (score / norm) * 100;
+};

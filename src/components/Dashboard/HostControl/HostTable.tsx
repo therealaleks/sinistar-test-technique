@@ -1,19 +1,23 @@
 import { useMemo } from 'react';
-import Box from '@mui/material/Box';
+
+import { Box, Typography, CardContent } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import DashboardCard from 'components/DashboardCard';
-import Typography from '@mui/material/Typography';
-import CardContent from '@mui/material/CardContent';
+
+import DashboardCard from 'components/Dashboard/DashboardCard';
+
 import type { Host } from 'shared/shared.types';
 
 interface HostTableProps {
-    hostData: Host[],
-    handleSelectedHostIds: (hostIds: number[]) => void,
-    loading?: boolean,
+    hostData: Host[];
+    handleSelectedHostIds: (hostIds: number[]) => void;
+    loading?: boolean;
 }
 
-function HostTable({ hostData, handleSelectedHostIds, loading }: HostTableProps) {
-
+function HostTable({
+    hostData,
+    handleSelectedHostIds,
+    loading,
+}: HostTableProps) {
     const columns: GridColDef[] = [
         {
             field: 'name',
@@ -38,20 +42,32 @@ function HostTable({ hostData, handleSelectedHostIds, loading }: HostTableProps)
     ];
 
     const rows = useMemo(() => {
-        return hostData.map(({ id, name, address, city, review_score }) => ({ id, name, address, city, review_score }));
-    }, [hostData])
+        return hostData.map(({ id, name, address, city, review_score }) => ({
+            id,
+            name,
+            address,
+            city,
+            review_score,
+        }));
+    }, [hostData]);
 
     return (
-        <DashboardCard sx={{ height: "100%" }} >
-            <CardContent sx={{ height: "85%" }}>
+        <DashboardCard sx={{ height: '100%' }}>
+            <CardContent sx={{ height: '85%' }}>
                 <Box mx="15px" mt="10px" mb="20px">
-                    <Typography variant="h5" component="div" fontWeight={"bold"}>
+                    <Typography
+                        variant="h5"
+                        component="div"
+                        fontWeight={'bold'}
+                    >
                         Hosts
                     </Typography>
                 </Box>
-                <Box m="10px" height={{ xs: "50vh", xl: "85%" }}>
+                <Box m="10px" height={{ xs: '50vh', xl: '85%' }}>
                     <DataGrid
-                        onRowSelectionModelChange={(rowIds) => handleSelectedHostIds(rowIds as number[])}
+                        onRowSelectionModelChange={(rowIds) =>
+                            handleSelectedHostIds(rowIds as number[])
+                        }
                         rows={rows}
                         columns={columns}
                         autoPageSize
@@ -62,7 +78,6 @@ function HostTable({ hostData, handleSelectedHostIds, loading }: HostTableProps)
                         disableColumnSorting
                     />
                 </Box>
-
             </CardContent>
         </DashboardCard>
     );

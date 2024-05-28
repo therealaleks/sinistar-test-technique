@@ -1,21 +1,24 @@
 import { useRef, useState, useMemo, useEffect } from 'react';
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
+
+import { Autocomplete, TextField, Grid, Typography } from '@mui/material';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
-import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
 import { debounce } from '@mui/material/utils';
-import { useMapsLibrary } from '@vis.gl/react-google-maps';
-import DashboardCard from 'components/DashboardCard';
-import DashboardAlert from 'components/DashboardAlert';
-import type { PlaceType } from 'shared/shared.types';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
+import { useMapsLibrary } from '@vis.gl/react-google-maps';
+
+import DashboardCard from 'components/Dashboard/DashboardCard';
+import DashboardAlert from 'components/Dashboard/DashboardAlert';
+
+import type { PlaceType } from 'shared/shared.types';
+
 interface AddressInputProps {
-    handleAddressInput?: (address: PlaceType | null) => void,
+    handleAddressInput?: (address: PlaceType | null) => void;
 }
 
-export default function AddressInput({ handleAddressInput }: AddressInputProps) {
+export default function AddressInput({
+    handleAddressInput,
+}: AddressInputProps) {
     const autocompleteService = useRef(null as any);
     const [value, setValue] = useState<PlaceType | null>(null);
     const [apiFailToastOpen, setApiFailToastOpen] = useState<boolean>(false);
@@ -30,13 +33,15 @@ export default function AddressInput({ handleAddressInput }: AddressInputProps) 
                     request: { input: string },
                     callback: (results?: readonly PlaceType[]) => void,
                 ) => {
-                    (autocompleteService.current as any).getPlacePredictions(
-                        request,
-                        callback,
-                    ).catch((e: any) => {
-                        console.log("failed to fetch address suggestions due to: " + e);
-                        setApiFailToastOpen(true);
-                    });
+                    (autocompleteService.current as any)
+                        .getPlacePredictions(request, callback)
+                        .catch((e: any) => {
+                            console.log(
+                                'failed to fetch address suggestions due to: ' +
+                                    e,
+                            );
+                            setApiFailToastOpen(true);
+                        });
                 },
                 400,
             ),
@@ -62,7 +67,7 @@ export default function AddressInput({ handleAddressInput }: AddressInputProps) 
         let active = true;
 
         if (!autocompleteService.current && placesLib) {
-            autocompleteService.current = new placesLib.AutocompleteService()
+            autocompleteService.current = new placesLib.AutocompleteService();
         }
         if (!autocompleteService.current) {
             return;
@@ -96,47 +101,70 @@ export default function AddressInput({ handleAddressInput }: AddressInputProps) 
 
     return (
         <>
-            <DashboardCard sx={{ p: "10px" }}>
+            <DashboardCard sx={{ p: '10px' }}>
                 <ThemeProvider theme={theme}>
                     <Autocomplete
                         id="google-address-field"
-                        sx={{ width: "100%" }}
-                        getOptionLabel={(option) =>
-                            option.description
-                        }
+                        sx={{ width: '100%' }}
+                        getOptionLabel={(option) => option.description}
                         options={options}
                         autoComplete
                         filterSelectedOptions
                         value={value}
                         noOptionsText="No locations"
                         onChange={(event: any, newValue: PlaceType | null) => {
-                            setOptions(newValue ? [newValue, ...options] : options);
+                            setOptions(
+                                newValue ? [newValue, ...options] : options,
+                            );
                             setValue(newValue);
-                            if (handleAddressInput) handleAddressInput(newValue);
+                            if (handleAddressInput)
+                                handleAddressInput(newValue);
                         }}
                         onInputChange={(event: any, newInputValue: string) => {
                             setInputValue(newInputValue);
                         }}
                         renderInput={(params) => (
-                            <TextField {...params} label="Enter your address" fullWidth />
+                            <TextField
+                                {...params}
+                                label="Enter your address"
+                                fullWidth
+                            />
                         )}
                         renderOption={(props, option) => {
                             return (
-
                                 <li {...props}>
                                     <Grid container alignItems="center">
-                                        <Grid item sx={{ display: 'flex', width: 44 }}>
-                                            <LocationOnIcon sx={{ color: 'text.secondary' }} />
+                                        <Grid
+                                            item
+                                            sx={{ display: 'flex', width: 44 }}
+                                        >
+                                            <LocationOnIcon
+                                                sx={{ color: 'text.secondary' }}
+                                            />
                                         </Grid>
-                                        <Grid item sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
-                                            {option.structured_formatting.main_text}
-                                            <Typography variant="body2" color="text.secondary">
-                                                {option.structured_formatting.secondary_text}
+                                        <Grid
+                                            item
+                                            sx={{
+                                                width: 'calc(100% - 44px)',
+                                                wordWrap: 'break-word',
+                                            }}
+                                        >
+                                            {
+                                                option.structured_formatting
+                                                    .main_text
+                                            }
+                                            <Typography
+                                                variant="body2"
+                                                color="text.secondary"
+                                            >
+                                                {
+                                                    option.structured_formatting
+                                                        .secondary_text
+                                                }
                                             </Typography>
                                         </Grid>
                                     </Grid>
                                 </li>
-
                             );
                         }}
                     />

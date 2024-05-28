@@ -1,20 +1,20 @@
-import {ChangeEvent, type ReactNode} from 'react';
+import { ChangeEvent, type ReactNode } from 'react';
 
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
-import Slider from '@mui/material/Slider';
-import Input from '@mui/material/Input';
+import { Box, Grid, Typography, Slider, Input } from '@mui/material';
 
 interface GenericSliderProps {
-    handleInputValue: (value: number) => void,
-    value: number,
-    children?: ReactNode,
-    color?: string, 
+    handleInputValue: (value: number) => void;
+    value: number;
+    children?: ReactNode;
+    color?: string;
 }
 
-export default function GenericSlider({ value, handleInputValue, children, color }: GenericSliderProps) {
-
+export default function GenericSlider({
+    value,
+    handleInputValue,
+    children,
+    color,
+}: GenericSliderProps) {
     const maxVal = 100;
     const minVal = 0;
 
@@ -22,7 +22,10 @@ export default function GenericSlider({ value, handleInputValue, children, color
         let newValue: number = 0;
 
         if (event.target.value !== '') {
-            newValue = Math.min(Math.max(Number(event.target.value), minVal), maxVal)
+            newValue = Math.min(
+                Math.max(Number(event.target.value), minVal),
+                maxVal,
+            );
         }
 
         handleInputValue(newValue);
@@ -41,9 +44,12 @@ export default function GenericSlider({ value, handleInputValue, children, color
             <Grid container spacing={2} alignItems="center">
                 <Grid item xs>
                     <Slider
-                        sx={{color: color}}
+                        sx={{ color: color }}
                         valueLabelDisplay="auto"
-                        value={value} onChange={(e, newVal) => handleInputValue(newVal as number)}
+                        value={value}
+                        onChange={(e, newVal) =>
+                            handleInputValue(newVal as number)
+                        }
                     />
                 </Grid>
                 <Grid item>
