@@ -99,7 +99,7 @@ function WeightSelector({ handleWeightsSelect, loading, distanceEnabled }: Weigh
         ];
 
         if (distanceEnabled) {
-            data.push({ id: 3, value: factors.UDW.value, label: factors.UDW.title, color: factors.UDW.color })
+            data.push({ id: 3, value: factors.UDW.value*100 + 1, label: factors.UDW.title, color: factors.UDW.color })
         }
 
         return data;
