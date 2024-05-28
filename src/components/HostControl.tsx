@@ -52,7 +52,6 @@ export default function HostControl({
         , [loading]
     )
 
-    // move to address bar?
     useEffect(() => {
         if (!geocoder.current && geocodingLibrary) {
             geocoder.current = new geocodingLibrary.Geocoder()

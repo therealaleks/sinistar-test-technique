@@ -8,7 +8,6 @@ import { getOffsetCenter } from 'utils/utilFunctions';
 
 interface MapDisplayProps {
     markerData: Host[],
-    //fix the type
     locationMarkerData: Coordinates | null,
     children?: ReactNode,
     offsetX?: number,
@@ -70,7 +69,6 @@ function MapDisplay({ markerData, locationMarkerData, children, offsetX = 0, off
             mapId={"86505c55e5bd8eb0"}
             defaultZoom={defaultZoom}
             defaultCenter={{ lat: 54.62328563684595, lng: -101.07148148602339 }}
-            //onCameraChanged={(ev: MapCameraChangedEvent) => { console.log(ev) }}
         >
             {markerData.map(({ latitude, longitude }, index) => <Marker key={index} position={{ lat: latitude, lng: longitude }} />)}
             {locationMarkerData &&

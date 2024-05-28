@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import Box from '@mui/material/Box';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import DashboardCard from 'components/DashboardCard';
@@ -24,7 +25,7 @@ function HostTable({ hostData, handleSelectedHostIds, loading }: HostTableProps)
             headerName: 'Address',
             width: 320,
         },
-        { 
+        {
             field: 'city',
             headerName: 'City',
             width: 100,
@@ -32,38 +33,38 @@ function HostTable({ hostData, handleSelectedHostIds, loading }: HostTableProps)
         {
             field: 'review_score',
             headerName: 'Rating',
-            width: 100, 
+            width: 100,
         },
     ];
 
-    // memoize somehow
-    const rows = hostData.map(({ id, name, address, city, review_score }) => ({ id, name, address, city, review_score }))
+    const rows = useMemo(() => {
+        return hostData.map(({ id, name, address, city, review_score }) => ({ id, name, address, city, review_score }));
+    }, [hostData])
 
     return (
-            <DashboardCard sx={{ height: "100%" }} >
-                <CardContent sx={{height: "85%"}}>
-                    <Box mx="15px" mt="10px" mb="20px">
-                        <Typography variant="h5" component="div" fontWeight={"bold"}>
-                            Hosts
-                        </Typography>
-                    </Box>
-                    <Box m="10px" height={{xs:"50vh", xl: "85%"}}>
-                        <DataGrid
-                            // dubious casting
-                            onRowSelectionModelChange={(rowIds) => handleSelectedHostIds(rowIds as number[])}
-                            rows={rows}
-                            columns={columns}
-                            autoPageSize
-                            checkboxSelection
-                            loading={loading}
-                            disableColumnMenu
-                            disableColumnResize
-                            disableColumnSorting
-                        />
-                    </Box>
+        <DashboardCard sx={{ height: "100%" }} >
+            <CardContent sx={{ height: "85%" }}>
+                <Box mx="15px" mt="10px" mb="20px">
+                    <Typography variant="h5" component="div" fontWeight={"bold"}>
+                        Hosts
+                    </Typography>
+                </Box>
+                <Box m="10px" height={{ xs: "50vh", xl: "85%" }}>
+                    <DataGrid
+                        onRowSelectionModelChange={(rowIds) => handleSelectedHostIds(rowIds as number[])}
+                        rows={rows}
+                        columns={columns}
+                        autoPageSize
+                        checkboxSelection
+                        loading={loading}
+                        disableColumnMenu
+                        disableColumnResize
+                        disableColumnSorting
+                    />
+                </Box>
 
-                </CardContent>
-            </DashboardCard>
+            </CardContent>
+        </DashboardCard>
     );
 }
 

@@ -18,7 +18,6 @@ export default function GenericSlider({ value, handleInputValue, children, color
     const maxVal = 100;
     const minVal = 0;
 
-    // bound inputs
     const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
         let newValue: number = 0;
 

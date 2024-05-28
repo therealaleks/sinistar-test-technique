@@ -54,10 +54,10 @@ function Dashboard() {
 
         const hostDistanceScores = distanceScores(hostDistances);
 
-        const sortedData = quickSort(hostData, (host1: Host, host2: Host) => {
+        const sortedData = quickSort([...hostData], (host1: Host, host2: Host) => {
 
             const weightedScore1 = hostWeightedScore(host1, weights, hostDistanceScores);
-            const weightedScore2 = hostWeightedScore(host2, weights, hostDistanceScores); // ignore upper and lowercase
+            const weightedScore2 = hostWeightedScore(host2, weights, hostDistanceScores);
 
             return weightedScore2 - weightedScore1;
         });
