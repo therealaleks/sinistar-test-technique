@@ -91,9 +91,11 @@ function WeightSelector({ handleWeightsSelect, loading, distanceEnabled }: Weigh
 
     const pieChartData = (): PieValueType[] => {
         const data: PieValueType[] = [
-            { id: 0, value: factors.HRW.value + 1, label: factors.HRW.title, color: factors.HRW.color },
-            { id: 1, value: factors.RSW.value + 1, label: factors.RSW.title, color: factors.RSW.color },
-            { id: 2, value: factors.EFW.value + 1, label: factors.EFW.title, color: factors.EFW.color },
+            // we multiply by 100 and add 1 to better reflect default sorting when all weights are 0
+            // that is to say, an unweighted mean
+            { id: 0, value: factors.HRW.value*100 + 1, label: factors.HRW.title, color: factors.HRW.color },
+            { id: 1, value: factors.RSW.value*100 + 1, label: factors.RSW.title, color: factors.RSW.color },
+            { id: 2, value: factors.EFW.value*100 + 1, label: factors.EFW.title, color: factors.EFW.color },
         ];
 
         if (distanceEnabled) {
@@ -151,7 +153,7 @@ function WeightSelector({ handleWeightsSelect, loading, distanceEnabled }: Weigh
                                     cornerRadius: 5,
                                     data: pieChartData(),
                                     valueFormatter: (v) => {
-                                        return `${(v.value-1)}`;
+                                        return `${((v.value-1)/100)}`;
                                     },
                                 },
                             ]}
