@@ -1,12 +1,12 @@
 # Sinistar Test Technique
 
-<center>
+<p align="center">
 <img src="./images/screenshot.PNG" alt="screenshot" width="800"/>
-</center>
+</p>
 
-<center>
+<p align="center">
 <img src="./images/mobile_screenshot.PNG" alt="screenshot" width="300"/>
-</center>
+</p>
 
 ## Installation
 
