@@ -34,7 +34,7 @@ Where $d_i$ is the distance between the user and host $i$, $d_{max}$ is the grea
 
 Finally, the calculation for the weighted score of a host is as follows:
 
-$$Score_h = {(\sum_{k=1}^n W_k {C_k \over max(C_k)}) \over  (\sum_{k=1}^n W_k)} * 100$$
+$$Score_h = {{\sum_{k=1}^n {W_k*{C_k \over max(C_k)}}} \over  {\sum_{k=1}^n{W_k}}} * 100$$
 
 Where $n$ is the number of criteria, $W_k$ is the weight of criterion score $C_k$, and $max(C_k)$ is the maximum possible value of criterion score $C_k$.
 
