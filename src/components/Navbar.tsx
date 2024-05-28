@@ -13,7 +13,7 @@ interface NavbarProps {
 function Navbar({height}: NavbarProps) {
     return (
         <Box height={height} sx={{ flexGrow: 1 }}>
-            <AppBar sx={{height:{height}, backdropFilter: "blur(10px)"}} position="fixed">
+            <AppBar sx={{height:{height}, backdropFilter: "blur(10px)", color: "#ffff"}} position="fixed">
                 <Toolbar>
                 <IconButton
             size="large"

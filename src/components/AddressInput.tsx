@@ -7,8 +7,7 @@ import Typography from '@mui/material/Typography';
 import { debounce } from '@mui/material/utils';
 import { useMapsLibrary } from '@vis.gl/react-google-maps';
 import Card from '@mui/material/Card';
-import Box from '@mui/material/Box';
-import type { PlaceType } from 'components/Dashboard';
+import type { PlaceType } from 'shared/shared.types';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 
@@ -18,11 +17,11 @@ interface AddressInputProps {
 
 
 
-export default function AddressInput({handleAddressInput}: AddressInputProps) {
+export default function AddressInput({ handleAddressInput }: AddressInputProps) {
     // any?
     const autocompleteService = useRef(null as any);
     const [value, setValue] = useState<PlaceType | null>(null);
-    const [inputValue, setInputValue] = useState('');
+    const [inputValue, setInputValue] = useState<string>('');
     const [options, setOptions] = useState<readonly PlaceType[]>([]);
     const placesLib = useMapsLibrary('places');
 
@@ -45,11 +44,11 @@ export default function AddressInput({handleAddressInput}: AddressInputProps) {
 
     const theme = createTheme({
         palette: {
-          background: {
-            paper: '#ffff',
-          },
+            background: {
+                paper: '#ffff',
+            },
         },
-      });
+    });
 
 
     //active?
@@ -90,60 +89,55 @@ export default function AddressInput({handleAddressInput}: AddressInputProps) {
     }, [value, inputValue, fetch, placesLib]);
 
     return (
-        <Box m={"15px"}>
-            
-            <Card sx={{p: "10px", borderRadius:"10px",  backdropFilter: "blur(5px)"}}>
-            <ThemeProvider theme={theme}>
-                <Autocomplete
-                    id="google-address-field"
-                    sx={{ width: "100%"}}
-                    getOptionLabel={(option) =>
-                        typeof option === 'string' ? option : option.description
-                    }
-                    filterOptions={(x) => x}
-                    options={options}
-                    autoComplete
-                    includeInputInList
-                    filterSelectedOptions
-                    value={value}
-                    noOptionsText="No locations"
-                    onChange={(event: any, newValue: PlaceType | null) => {
-                        setOptions(newValue ? [newValue, ...options] : options);
-                        setValue(newValue);
-                        if(handleAddressInput) handleAddressInput(newValue);
-                    }}
-                    onInputChange={(event, newInputValue) => {
-                        setInputValue(newInputValue);
-                    }}
-                    renderInput={(params) => (
-                        <TextField {...params} label="Enter your address" fullWidth />
-                    )}
-                    renderOption={(props, option) => {
-                        // const matches =
-                        //   option.structured_formatting.main_text_matched_substrings || [];
+            <Card sx={{ p: "10px", borderRadius: "10px", boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)", backdropFilter: "blur(5px)" }}>
+                <ThemeProvider theme={theme}>
+                    <Autocomplete
+                        id="google-address-field"
+                        sx={{ width: "100%" }}
+                        getOptionLabel={(option) =>
+                            typeof option === 'string' ? option : option.description
+                        }
+                        filterOptions={(x) => x}
+                        options={options}
+                        autoComplete
+                        filterSelectedOptions
+                        value={value}
+                        noOptionsText="No locations"
+                        onChange={(event: any, newValue: PlaceType | null) => {
+                            setOptions(newValue ? [newValue, ...options] : options);
+                            setValue(newValue);
+                            if (handleAddressInput) handleAddressInput(newValue);
+                        }}
+                        onInputChange={(event, newInputValue) => {
+                            setInputValue(newInputValue);
+                        }}
+                        renderInput={(params) => (
+                            <TextField {...params} label="Enter your address" fullWidth />
+                        )}
+                        renderOption={(props, option) => {
+                            // const matches =
+                            //   option.structured_formatting.main_text_matched_substrings || [];
 
-                        return (
-                            
-                            <li {...props}>
-                                <Grid container alignItems="center">  
-                                    <Grid item sx={{ display: 'flex', width: 44 }}>
-                                        <LocationOnIcon sx={{ color: 'text.secondary' }} />
+                            return (
+
+                                <li {...props}>
+                                    <Grid container alignItems="center">
+                                        <Grid item sx={{ display: 'flex', width: 44 }}>
+                                            <LocationOnIcon sx={{ color: 'text.secondary' }} />
+                                        </Grid>
+                                        <Grid item sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
+                                            {option.structured_formatting.main_text}
+                                            <Typography variant="body2" color="text.secondary">
+                                                {option.structured_formatting.secondary_text}
+                                            </Typography>
+                                        </Grid>
                                     </Grid>
-                                    <Grid item sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
-                                        {option.structured_formatting.main_text}
-                                        <Typography variant="body2" color="text.secondary">
-                                            {option.structured_formatting.secondary_text}
-                                        </Typography>
-                                    </Grid>
-                                </Grid>
-                            </li>
-                            
-                        );
-                    }}
-                />
-                            </ThemeProvider>
+                                </li>
+
+                            );
+                        }}
+                    />
+                </ThemeProvider>
             </Card>
-
-        </Box>
     );
 }

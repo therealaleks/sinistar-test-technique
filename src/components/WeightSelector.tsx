@@ -14,35 +14,93 @@ import MoreTimeIcon from '@mui/icons-material/MoreTime';
 import ThumbsUpDownRoundedIcon from '@mui/icons-material/ThumbsUpDownRounded';
 import PlaceIcon from '@mui/icons-material/Place';
 
-import { Weights } from 'components/Dashboard';
+import type { Weights } from 'shared/shared.types';
 import GenericSlider from 'components/GenericSlider';
+import type { PieValueType } from '@mui/x-charts/models/seriesType/pie';
 
 interface WeightSelectorProps {
     handleWeightsSelect: (weights: Weights) => void,
-    loading?:boolean,
+    loading?: boolean,
+    distanceEnabled?: boolean,
 }
 
-function WeightSelector({ handleWeightsSelect, loading }: WeightSelectorProps) {
+interface FactorConfigs<T> {
+    title: string,
+    icon: JSX.Element,
+    value: T,
+    handler: (value: T) => void,
+    color: string,
+    enabled: boolean,
+}
 
-    const [HRW, setHRW] = useState(50)
-    const [RSW, setRSW] = useState(50)
-    const [EFW, setEFW] = useState(50)
-    const [UDW, setUDW] = useState(50)
+function WeightSelector({ handleWeightsSelect, loading, distanceEnabled }: WeightSelectorProps) {
 
-    const weightsColorPalette = {
-        HRW: "#ff9800",
-        RSW: "#0CAFA9",
-        EFW: "#B0D8A4",
-        UDW: "#a0D32a"
+    const [HRW, setHRW] = useState<number>(50)
+    const [RSW, setRSW] = useState<number>(50)
+    const [EFW, setEFW] = useState<number>(50)
+    const [UDW, setUDW] = useState<number>(50)
+
+    const factors: { [key: string]: FactorConfigs<number> } = {
+        RSW: {
+            title: "Rating score",
+            icon: <ThumbsUpDownRoundedIcon />,
+            value: RSW,
+            handler: setRSW,
+            color: "#0CAFA9",
+            enabled: true,
+        },
+        HRW: {
+            title: "Host response rate",
+            icon: <ChatIcon />,
+            value: HRW,
+            handler: setHRW,
+            color: "#ff9800",
+            enabled: true,
+        },
+        EFW: {
+            title: "Extension flexibility",
+            icon: <MoreTimeIcon />,
+            value: EFW,
+            handler: setEFW,
+            color: "#B0D8A4",
+            enabled: true,
+        },
+        UDW: {
+            title: "Distance",
+            icon: <PlaceIcon />,
+            value: UDW,
+            handler: setUDW,
+            color: "#a0D32a",
+            enabled: distanceEnabled ? true : false,
+        },
     }
 
-    useEffect(():void => {
+    const handleWeights = (): void => {
         handleWeightsSelect({
             HRW: HRW,
             RSW: RSW,
             EFW: EFW,
+            UDW: UDW,
         })
+    }
+
+    useEffect((): void => {
+        handleWeights();
     }, [])
+
+    const pieChartData = (): PieValueType[] => {
+        const data: PieValueType[] = [
+            { id: 0, value: factors.HRW.value, label: factors.HRW.title, color: factors.HRW.color },
+            { id: 1, value: factors.RSW.value, label: factors.RSW.title, color: factors.RSW.color },
+            { id: 2, value: factors.EFW.value, label: factors.EFW.title, color: factors.EFW.color },
+        ];
+
+        if (distanceEnabled) {
+            data.push({ id: 3, value: factors.UDW.value, label: factors.UDW.title, color: factors.UDW.color })
+        }
+
+        return data;
+    };
 
     return (
         <Card sx={{ borderRadius: "10px", height: "100%", pl: "13px", boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)", backdropFilter: "blur(5px)" }}>
@@ -52,89 +110,59 @@ function WeightSelector({ handleWeightsSelect, loading }: WeightSelectorProps) {
                         Tell us what matters
                     </Typography>
                 </Box>
-                <Stack spacing={0} direction="row" alignItems="center">
-                    <Box sx={{ width: "50%" }} >
+                <Stack spacing={0} direction="row" alignItems="center" justifyContent={"center"}>
+                    <Box sx={{ width: { xs: "100%", md: "50%" } }} >
                         <Stack spacing={0} direction="column" alignItems="center">
-                        <GenericSlider handleInputValue={setUDW} value={UDW} color={weightsColorPalette.UDW}>
-                                <Stack spacing={2} direction="row" alignItems="center">
-                                    <PlaceIcon/>
-                                    <Typography id="input-slider" gutterBottom>
-                                        Distance
-                                    </Typography>
-                                </Stack>
-
-                            </GenericSlider>
-                            <GenericSlider handleInputValue={setHRW} value={HRW} color={weightsColorPalette.HRW}>
-                                <Stack spacing={2} direction="row" alignItems="center">
-                                    <ThumbsUpDownRoundedIcon />
-                                    <Typography id="input-slider" gutterBottom>
-                                        Host rating
-                                    </Typography>
-                                </Stack>
-
-                            </GenericSlider>
-                            <GenericSlider handleInputValue={setRSW} value={RSW} color={weightsColorPalette.RSW}>
-                                <Stack spacing={2} direction="row" alignItems="center">
-                                    <ChatIcon />
-                                    <Typography id="input-slider" gutterBottom>
-                                        Host response rate
-                                    </Typography>
-                                </Stack>
-                            </GenericSlider>
-                            <GenericSlider handleInputValue={setEFW} value={EFW} color={weightsColorPalette.EFW}>
-                                <Stack spacing={2} direction="row" alignItems="center">
-                                    <MoreTimeIcon />
-                                    <Typography id="input-slider" gutterBottom>
-                                        Extension flexibility
-                                    </Typography>
-                                </Stack>
-                            </GenericSlider>
+                            {
+                                Object.keys(factors).map((factor: string) => {
+                                    const configs = factors[factor];
+                                    return <>
+                                        {configs.enabled &&
+                                            <GenericSlider handleInputValue={configs.handler} value={configs.value} color={configs.color}>
+                                                <Stack spacing={2} direction="row" alignItems="center">
+                                                    {configs.icon}
+                                                    <Typography id="input-slider" gutterBottom>
+                                                        {configs.title}
+                                                    </Typography>
+                                                </Stack>
+                                            </GenericSlider>
+                                        }
+                                    </>
+                                }
+                                )
+                            }
                         </Stack>
                     </Box>
-                    <PieChart
-                        sx={{ ml: "25%" }}
-                        slotProps={{
-                            legend: {
-                                direction: 'row',
-                                position: { vertical: 'top', horizontal: 'middle' },
-                                padding: 0,
-                                hidden: true
-                            },
-                        }}
-                        series={[
-                            {
-                                highlightScope: { faded: 'global', highlighted: 'item' },
-                                innerRadius: 45,
-                                outerRadius: 100,
-                                paddingAngle: 5,
-                                cornerRadius: 5,
-                                data: [
-                                    
-                                    { id: 0, value: HRW * 100 + 1, label: 'Host rating', color: weightsColorPalette.HRW },
-                                    { id: 1, value: RSW * 100 + 1, label: 'Host response rate', color: weightsColorPalette.RSW },
-                                    { id: 2, value: EFW * 100 + 1, label: 'Extension flexibility', color: weightsColorPalette.EFW },
-                                    { id: 3, value: UDW * 100 + 1, label: 'Distance', color: weightsColorPalette.UDW },
-                                    
-
-                                ],
-                                valueFormatter: (v) => {
-                                    return `${(v.value-1)/100}`;
+                    <Box width="50%" height="200px" display={{ xs: "none", md: "inline" }} >
+                        <PieChart
+                            sx={{ ml: "25%" }}
+                            slotProps={{
+                                legend: {
+                                    hidden: true
                                 },
-                            },
-                        ]}
-                        width={100}
-                        height={200}
-                    />
+                            }}
+                            series={[
+                                {
+                                    highlightScope: { faded: 'global', highlighted: 'item' },
+                                    innerRadius: "50%",
+                                    outerRadius: "100%",
+                                    paddingAngle: 5,
+                                    cornerRadius: 5,
+                                    data: pieChartData(),
+                                    valueFormatter: (v) => {
+                                        return `${(v.value)}`;
+                                    },
+                                },
+                            ]}
+                        />
+                    </Box>
                 </Stack>
                 <Box my="10px">
                     <Stack spacing={0} direction="row" alignItems="center" justifyContent={"center"}>
                         <Button
+                            sx={{ color: "white" }}
                             variant="contained"
-                            onClick={() => handleWeightsSelect({
-                                HRW: HRW,
-                                RSW: RSW,
-                                EFW: EFW,
-                            })}
+                            onClick={handleWeights}
                             disabled={loading}
                         >
                             FIND BEST HOSTS

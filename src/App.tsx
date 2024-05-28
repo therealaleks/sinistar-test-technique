@@ -3,7 +3,6 @@ import Dashboard from 'components/Dashboard';
 import Navbar from 'components/Navbar';
 import { APIProvider } from '@vis.gl/react-google-maps';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { green, orange } from '@mui/material/colors';
 
 function App() {
 
@@ -21,6 +20,15 @@ function App() {
       },
       background: {
         paper: 'rgba(255,255,255,0.80)',
+      },
+    },
+    breakpoints: {
+      values: {
+        xs: 0,
+        sm: 600,
+        md: 900,
+        lg: 1200,
+        xl: 1700,
       },
     },
   });

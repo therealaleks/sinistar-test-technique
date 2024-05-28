@@ -1,12 +1,10 @@
 import {ChangeEvent, type ReactNode} from 'react';
 
-import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Slider from '@mui/material/Slider';
 import Input from '@mui/material/Input';
-import VolumeUp from '@mui/icons-material/VolumeUp';
 
 interface GenericSliderProps {
     handleInputValue: (value: number) => void,
@@ -17,8 +15,18 @@ interface GenericSliderProps {
 
 export default function GenericSlider({ value, handleInputValue, children, color }: GenericSliderProps) {
 
+    const maxVal = 100;
+    const minVal = 0;
+
+    // bound inputs
     const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-        handleInputValue(event.target.value === '' ? 0 : Number(event.target.value));
+        let newValue: number = 0;
+
+        if (event.target.value !== '') {
+            newValue = Math.min(Math.max(Number(event.target.value), minVal), maxVal)
+        }
+
+        handleInputValue(newValue);
     };
 
     const handleBlur = () => {
